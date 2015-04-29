@@ -1,3 +1,5 @@
+MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
+
 function find_dir_in_parents() {
     local dirname=$1
     local look=$( readlink --canonicalize ${2:-.} )
@@ -17,11 +19,20 @@ function switch_virtualenvs() {
 }
 
 function detect_virtualenv() {
-    local dir=${1:-.venv}
-    local found=$( find_dir_in_parents "$dir" )
-    if [ -n "$find" -a "$VIRTUAL_ENV" != "$find" ]
+    local dirs=${1:-$MY_VIRTUALENV_NAMES}
+    local -a venvs
+    IFS=';' read -ra dirs <<< "$VIRTUAL_ENV;$dirs"
+    for dir in "${dirs[@]}"
+    do
+        local found=$( find_dir_in_parents "$dir" )
+        if [ -n "$found" ]
+        then
+            venvs+=($found)
+        fi
+    done
+    if [ "$VIRTUAL_ENV" != "${venvs[0]}" ]
     then
-        switch_virtualenvs "$find"
+        switch_virtualenvs "${venvs[0]}"
     fi
 }
 
