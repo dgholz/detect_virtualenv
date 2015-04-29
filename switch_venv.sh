@@ -18,9 +18,8 @@ function find_dir_in_parents() {
 
 function switch_virtualenvs() {
     local new="$( readlink --canonicalize "$1/bin/activate" )"
-    test -x "$new" || return
     [ -n "${VIRTUAL_ENV+virtualenv active}" ] && deactivate
-    source "$new"
+    test -e "$new" && source "$new"
 }
 
 function detect_virtualenv() {
