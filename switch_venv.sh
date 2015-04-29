@@ -40,5 +40,3 @@ function detect_virtualenv() {
         switch_virtualenvs "${venvs[0]}"
     fi
 }
-
-PROMPT_COMMAND="detect_virtualenv; $PROMPT_COMMAND"
