@@ -1,11 +1,12 @@
 MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
 
 function find_dir_in_parents() {
-    local dirname=$1
+    local needle=$1
+    test -z "$needle" && return
     local look=$( readlink --canonicalize ${2:-.} )
     while [ "$look" != '/' ]
     do
-        local candidate=$look/$dirname
+        local candidate=$look/$needle
         test -d "$candidate" && echo $candidate && break
         look=$( dirname "$look" )
     done
