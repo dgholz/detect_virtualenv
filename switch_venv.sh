@@ -4,11 +4,13 @@ function find_dir_in_parents() {
     local needle=$1
     test -z "$needle" && return
     local look=$( readlink --canonicalize ${2:-.} )
-    while [ "$look" != '/' ]
+    local old_look
+    while [ "$look" != "$old_look" ]
     do
-        local candidate=$look/$needle
-        test -d "$candidate" && echo $candidate && break
+        old_look=$look
         look=$( dirname "$look" )
+        local candidate=$old_look/${needle#$old_look/}
+        test -d "$candidate" && echo $candidate && break
     done
 }
 
