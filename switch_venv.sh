@@ -20,6 +20,7 @@ function switch_virtualenvs() {
     local new="$( readlink --canonicalize "$1/bin/activate" )"
     [ -n "${VIRTUAL_ENV+virtualenv active}" ] && deactivate
     test -e "$new" && source "$new"
+    true
 }
 
 function detect_virtualenv() {
