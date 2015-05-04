@@ -40,3 +40,5 @@ function detect_virtualenv() {
         switch_virtualenvs "${venvs[0]}"
     fi
 }
+
+# vim: ft=sh
