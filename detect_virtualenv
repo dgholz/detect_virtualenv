@@ -2,8 +2,9 @@ MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
 
 function find_dir_in_parents() {
     local needle=$1
-    test -z "$needle" && return
+    test -n "$needle" || return
     local look=$( readlink --canonicalize ${2:-.} )
+    test -d "$look" || return
     local old_look
     local only_in=$( dirname "$needle" )
     while [ "$look" != "$old_look" ]

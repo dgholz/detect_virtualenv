@@ -153,6 +153,12 @@ function teardown_corpus() {
   [ -z "$found" ]
 }
 
+@test "start dir doesn't exist (nothing found)" {
+  local tempdir=$( get_tempdir_name )
+  local found=$( find_dir_in_parents 'foo' "$tempdir/foobar" )
+  [ -z "$found" ]
+}
+
 @test "no dir to find given (nothing found)" {
   local tempdir=$( get_tempdir_name )
   builtin cd "$tempdir/foo/bar"
