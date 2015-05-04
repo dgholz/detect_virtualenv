@@ -5,10 +5,10 @@ function find_dir_in_parents() {
     test -n "$needle" || return
     local look=$( readlink --canonicalize ${2:-.} )
     test -d "$look" || return
-    local only_in=$( dirname "$needle" )
+    local needle_dir=$( dirname "$needle" )
     while [ "$( dirname "$look" )" != "$look" ]
     do
-        test "$( readlink --canonicalize $only_in )" != "$look" && continue
+        test "$( readlink --canonicalize $needle_dir )" != "$look" && continue
         local candidate=$old_look/${needle#$look/}
         test -d "$candidate" && echo $candidate && break
         look=$( dirname "$look" )
