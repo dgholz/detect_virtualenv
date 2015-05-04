@@ -8,9 +8,11 @@ function find_dir_in_parents() {
     local needle_dir=$( dirname "$needle" )
     while [ "$( dirname "$look" )" != "$look" ]
     do
-        test "$( readlink --canonicalize $needle_dir )" != "$look" && continue
-        local candidate=$old_look/${needle#$look/}
-        test -d "$candidate" && echo $candidate && break
+        if [ "$( readlink --canonicalize $needle_dir )" = "$look" ]
+        then
+            local candidate=$look/${needle#$look/}
+            test -d "$candidate" && echo $candidate && break
+        fi
         look=$( dirname "$look" )
     done
 }

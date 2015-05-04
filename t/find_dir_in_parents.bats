@@ -166,4 +166,16 @@ function teardown_corpus() {
   [ -z "$found" ]
 }
 
+@test "abs path to find and it's a sibling of an ancestor" {
+  local tempdir=$( get_tempdir_name )
+  local found=$( find_dir_in_parents "$tempdir/quux" "$tempdir/foo/bar" )
+  [ "$found" = "$tempdir/quux" ]
+}
+
+@test "abs path to find but it's not a sibling of an ancestor (not found)" {
+  local tempdir=$( get_tempdir_name )
+  local found=$( find_dir_in_parents "$tempdir/quux/quuux" "$tempdir/foo/bar" )
+  [ -z "$found" ]
+}
+
 # vim: ft=sh
