@@ -82,6 +82,16 @@ function teardown_corpus() {
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
+@test "ignores non-builtin cd" {
+  function cd() {
+      echo hi
+      builtin cd $@
+  }
+  local tempdir=$( get_tempdir_name )
+  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
+  [ "$found" = "$tempdir/foo/bar/baz" ]
+}
+
 @test "dir to find is sibling of starting dir" {
   local tempdir=$( get_tempdir_name )
   local found=$( find_dir_in_parents 'bie' "$tempdir/foo/bar" )
