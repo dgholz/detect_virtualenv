@@ -13,7 +13,7 @@ function teardown() {
 }
 
 function setup_corpus() {
-  tempdir=$( make_tempdir )
+  local tempdir=$( make_tempdir )
   local found=$( find_dir_in_parents "quux" "$tempdir/foo/bar" )
   #
   # $tempdir
