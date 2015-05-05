@@ -28,7 +28,7 @@ function switch_virtualenvs() {
 function detect_virtualenv() {
     local dirs=${1:-$MY_VIRTUALENV_NAMES}
     local -a venvs
-    IFS=';' read -ra dirs <<< "$VIRTUAL_ENV;$dirs"
+    IFS=':' read -ra dirs <<< "$VIRTUAL_ENV:$dirs"
     for dir in "${dirs[@]}"
     do
         local found=$( find_dir_in_parents "$dir" )
