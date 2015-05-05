@@ -28,20 +28,16 @@ function switch_virtualenvs() {
 
 function detect_virtualenv() {
     local dirs=${1:-$MY_VIRTUALENV_NAMES}
-    local -a venvs
     IFS=':' read -ra dirs <<< "$VIRTUAL_ENV:$dirs"
     for dir in "${dirs[@]}"
     do
         local found=$( find_dir_in_parents "$dir" )
         if [ -n "$found" ]
         then
-            venvs+=($found)
+            switch_virtualenvs "$found"
+            break
         fi
     done
-    if [ "$VIRTUAL_ENV" != "${venvs[0]}" ]
-    then
-        switch_virtualenvs "${venvs[0]}"
-    fi
 }
 
 # vim: ft=sh
