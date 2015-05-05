@@ -55,3 +55,11 @@ function deactivate() {
   [ "$_ACTIVATED_FOR" = "$BATS_TEST_NAME" ]
   [ "$_DEACTIVATED_FOR" = "$BATS_TEST_NAME" ]
 }
+
+@test "new virtualenv matches current is a no-op" {
+  local tempdir=$( get_tempdir_name )
+  VIRTUAL_ENV="$tempdir/venv"
+  switch_virtualenvs "$tempdir/venv"
+  [ -z "$_ACTIVATED_FOR" ]
+  [ -z "$_DEACTIVATED_FOR" ]
+}

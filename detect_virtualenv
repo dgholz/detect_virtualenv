@@ -19,6 +19,7 @@ function find_dir_in_parents() {
 
 function switch_virtualenvs() {
     local new="$( readlink --canonicalize "$1/bin/activate" )"
+    [ "$VIRTUAL_ENV" = "${new%/bin/activate}" ] && return
     [ -n "${VIRTUAL_ENV+virtualenv active}" ] && deactivate
     test -e "$new" && source "$new"
     true
