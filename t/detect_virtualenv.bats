@@ -35,4 +35,12 @@ function setup() {
   [ "$_SWITCH_TO" = "this_virtualenv" ]
 }
 
+@test "switch to \"\" if no dirs found" {
+  function find_dir_in_parents() {
+    :
+  }
+  detect_virtualenv quux:quuux:quuuux
+  [ "${_SWITCH_TO-not set}" = "" ]
+}
+
 # vim: ft=sh
