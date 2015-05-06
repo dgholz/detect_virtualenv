@@ -20,7 +20,8 @@ source ~/.vendor/detect_virtualenv/detect_virtualenv
 Example
 =======
 
-(screencast goes here)
+[![Screencast of simple behaviour](https://dgholz.github.io/detect_virtualenv/detect_virtualenv_simple.gif)]
+
 ```shell
 export MY_VIRTUALENV_NAMES=virtualenv_run:venv
 cd a/dir/with/a/virtualenv
