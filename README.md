@@ -21,7 +21,7 @@ echo . ~/.vendor/detect_virtualenv/detect_virtualenv >> ~/.bashrc # enable for n
 Example
 -------
 
-[Screencast of simple behaviour](https://dgholz.github.io/detect_virtualenv/detect_virtualenv_simple.gif)
+![Screencast of simple behaviour](https://dgholz.github.io/detect_virtualenv/detect_virtualenv_simple.gif)
 
 ```shell
 export MY_VIRTUALENV_NAMES=cool_virtualev:rad_venv:ve # add this to your ~/.bashrc to set it for all new sessions
