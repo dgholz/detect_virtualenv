@@ -33,6 +33,22 @@ detect_virtualenv # deactivates the previously-found virtualenv
 Automatically detecting virtualenvs
 ===================================
 
-Add to `PROMPT_COMMAND`, so `detect_virtualenv` is invoked everytime the prompt is shown:
+You can configure your shell to automatically execute `detect_virtualenv`.
 
-Override `cd` && `pushd` and `popd`, so `detect_virtualenv` is invoked everytime the directory is changed:
+### Add to `PROMPT_COMMAND`, so `detect_virtualenv` is invoked everytime the prompt is shown
+
+`detect_virtualenv` provides a helper function, which is automatically run if it is sourced with `on_prompt` as the first argument:
+```shell
+. path/to/detect_virtualenv on_prompt
+```
+It will avoid adding to `PROMPT_COMMAND` if it is already present.
+
+### Override `cd`, `pushd`, and `popd`, so `detect_virtualenv` is invoked everytime the directory is changed:
+
+Not recommended, as other tools may override `cd` et al. e.g. `rvm`. Only use if you are certain no other part of your `~/.bashrc` changes these builtins:
+```shell
+. path/to/detect_virtualenv
+function cd()    { builtin cd    "$@" && detect_virtualenv }
+function pushd() { builtin pushd "$@" && detect_virtualenv }
+function popd()  { builtin popd  "$@" && detect_virtualenv }
+```

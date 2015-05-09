@@ -38,4 +38,22 @@ function detect_virtualenv() {
     switch_virtualenvs "$found"
 }
 
+function detect_virtualenv_on_prompt() {
+  if [ "${PROMPT_COMMAND/detect_virtualenv//}" = "$PROMPT_COMMAND" ] ; then
+    export PROMPT_COMMAND="detect_virtualenv${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+  fi
+}
+
+if [ $# -gt 0 ]
+then
+  case $1 in
+    on_prompt) shift; detect_virtualenv_on_prompt ;;
+  esac
+fi
+
+if [ $# -gt 0 ]
+then
+  echo detect_virtualenv: ignoring unknown parameters: $@ >&2
+fi
+
 # vim: ft=sh
