@@ -1,5 +1,5 @@
 detect_virtualenv
------------------
+=================
 
 Switch virtualenvs as easy as changing directories!
 
@@ -10,7 +10,7 @@ To use this script, `source path/to/detect_virtualenv`. A function called `detec
 By default, it will only detect a virtualenv called `.venv`. To detect virtualenvs with other names, set the `MY_VIRTUALENV_NAMES` variable to a colon-separated list of the names you use.
 
 Install from GitHub
-===================
+-------------------
 
 ```shell
 git clone https://github.com/dgholz/detect_virtualenv.git ~/.vendor/detect_virtualenv
@@ -18,7 +18,7 @@ source ~/.vendor/detect_virtualenv/detect_virtualenv
 ```
 
 Example
-=======
+-------
 
 [![Screencast of simple behaviour](https://dgholz.github.io/detect_virtualenv/detect_virtualenv_simple.gif)]
 
@@ -31,7 +31,7 @@ detect_virtualenv # deactivates the previously-found virtualenv
 ```
 
 Automatically detecting virtualenvs
-===================================
+-----------------------------------
 
 You can configure your shell to automatically execute `detect_virtualenv`.
 
