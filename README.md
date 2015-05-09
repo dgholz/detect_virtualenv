@@ -5,7 +5,7 @@ Switch virtualenvs as easy as changing directories!
 
 [![Build Status](https://travis-ci.org/dgholz/detect_virtualenv.svg?branch=master)](https://travis-ci.org/dgholz/detect_virtualenv)
 
-`detect_virtualenv` is a function that will search for [virtualenvs](http://www.virtualenv.com/) in the current directory and its parents. When it finds one, it will activate it; if it doesn't find one, it will deactivate any active virtualenv.
+`detect_virtualenv` is a function that will search for [virtualenvs](https://virtualenv.pypa.io/en/latest/) in the current directory and its parents. When it finds one, it will activate it; if it doesn't find one, it will deactivate any active virtualenv.
 
 By default, it will only detect a virtualenv called `.venv`. To instead detect virtualenvs with other names, set the `MY_VIRTUALENV_NAMES` variable to a colon-separated list of the names you use e.g. `export MY_VIRTUALENV_NAMES=cool_virtualev:rad_venv:ve`.
 
