@@ -1,4 +1,5 @@
 MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
+DETECT_VIRTUALENV_STATUS=on
 
 function find_dir_in_parents() {
     local needle=$1
@@ -26,9 +27,42 @@ function switch_virtualenvs() {
     true
 }
 
+function status_should_be() {
+    case "$1" in
+        status) echo ${DETECT_VIRTUALENV_STATUS-on} ;;
+        on)  unset  DETECT_VIRTUALENV_STATUS     ;;
+        off) export DETECT_VIRTUALENV_STATUS=off ;;
+        toggle)
+            if [ "$DETECT_VIRTUALENV_STATUS" = "off" ]
+            then
+                status_should_be on
+            else
+                status_should_be off
+            fi
+        ;;
+    esac
+}
+
 function detect_virtualenv() {
-    local names=${1:-$MY_VIRTUALENV_NAMES}
-    IFS=':' read -ra dirs <<< "$VIRTUAL_ENV:$names"
+    local -a args=()
+    while [ "$#" -gt 0 ]
+    do
+        local arg="$1"; shift
+        if [ "${arg#--}" != "$arg" ]
+        then
+            status_should_be "${arg#--}"
+        else
+            args=("${args[@]}" "$arg")
+        fi
+    done
+
+    if [ "${DETECT_VIRTUALENV_STATUS-on}" != "on" ]
+    then
+        return
+    fi
+
+    local names=${args[0]:-$MY_VIRTUALENV_NAMES}
+    IFS=':' read -ra dirs <<< "${VIRTUAL_ENV:+$VIRTUAL_ENV:}$names"
     local found
     for dir in "${dirs[@]}"
     do
