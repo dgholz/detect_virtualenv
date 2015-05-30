@@ -5,21 +5,24 @@ function setup() {
   source detect_virtualenv
 
   function find_dir_in_parents() {
-    _DETECT_FROM=$@
+      echo "$@"
+  }
+  function switch_virtualenvs() {
+      _SWITCH_TO=$@
   }
 }
 
 @test "toggle status defaults to enabled" {
   [ "$( detect_virtualenv --status )" = "on" ]
   detect_virtualenv hi
-  [ "$_DETECT_FROM" = "hi" ]
+  [ "$_SWITCH_TO" = "hi" ]
 }
 
 @test "toggle off" {
   detect_virtualenv --off
   [ "$( detect_virtualenv --status )" = "off" ]
   detect_virtualenv hi
-  [ "$_DETECT_FROM-never set" = "never set" ]
+  [ "${_SWITCH_TO-never set}" = "never set" ]
 }
 
 @test "toggle on" {
@@ -27,7 +30,7 @@ function setup() {
   detect_virtualenv --on
   [ "$( detect_virtualenv --status )" = "on" ]
   detect_virtualenv hi
-  [ "$_DETECT_FROM" = "hi" ]
+  [ "$_SWITCH_TO" = "hi" ]
 }
 
 @test "set status with environment variable" {
