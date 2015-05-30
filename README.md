@@ -33,6 +33,21 @@ popd
 detect_virtualenv # deactivates the previously-found virtualenv
 ```
 
+Command-line Options
+--------------------
+
+`detect_virtualenv` accepts some command-line options:
+ * --off
+   disables detection of virtualenvs when calling `detect_virtualenv`
+ * --on
+   enables detection of virtualenvs when calling `detect_virtualenv` (on by default)
+ * --status
+   prints whether detection of virtualenv is enabled ('on') or disabled ('off')
+ * --toggle
+   enables detection of virtualenv if currently disabled, and vise versa
+ * <name>[:<name>] ...
+   a colon-separated list of virtualenvs to detect in place of the current value of `$MY_VIRTUALENV_NAMES`
+
 Automatically detecting virtualenvs
 -----------------------------------
 
