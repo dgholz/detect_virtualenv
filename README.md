@@ -44,7 +44,7 @@ Command-line Options
  * `--status`
     prints whether detection of virtualenv is enabled ('on') or disabled ('off')
  * `--toggle`
-    enables detection of virtualenv if currently disabled, and vise versa
+    enables detection of virtualenv if currently disabled, and vice versa
  * `<name>[:<name>] ...`
     a colon-separated list of virtualenvs to detect in place of the current value of `$MY_VIRTUALENV_NAMES`
 
