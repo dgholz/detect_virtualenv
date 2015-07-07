@@ -32,6 +32,7 @@ function status_should_be() {
         status) echo ${DETECT_VIRTUALENV_STATUS-on} ;;
         on)  unset  DETECT_VIRTUALENV_STATUS     ;;
         off) export DETECT_VIRTUALENV_STATUS=off ;;
+        deactivate) status_should_be off; switch_virtualenvs;;
         toggle)
             if [ "$DETECT_VIRTUALENV_STATUS" = "off" ]
             then

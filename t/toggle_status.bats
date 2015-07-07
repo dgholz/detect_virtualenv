@@ -1,5 +1,3 @@
-load begin_and_end
-
 function setup() {
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
@@ -31,6 +29,14 @@ function setup() {
   [ "$( detect_virtualenv --status )" = "on" ]
   detect_virtualenv hi
   [ "$_SWITCH_TO" = "hi" ]
+}
+
+@test "toggle deactivated" {
+  detect_virtualenv --deactivate
+  [ "$( detect_virtualenv --status )" = "off" ]
+  [ "${_SWITCH_TO-not set}" = "" ]
+  detect_virtualenv hi
+  [ "${_SWITCH_TO-not set}" = "" ]
 }
 
 @test "set status with environment variable" {
