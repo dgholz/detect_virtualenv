@@ -1,5 +1,3 @@
-load begin_and_end
-
 function setup() {
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
