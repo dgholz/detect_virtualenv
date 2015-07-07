@@ -33,6 +33,14 @@ function setup() {
   [ "$_SWITCH_TO" = "hi" ]
 }
 
+@test "toggle deactivated" {
+  detect_virtualenv --deactivate
+  [ "$( detect_virtualenv --status )" = "off" ]
+  [ "${_SWITCH_TO-not set}" = "" ]
+  detect_virtualenv hi
+  [ "${_SWITCH_TO-not set}" = "" ]
+}
+
 @test "set status with environment variable" {
   export DETECT_VIRTUALENV_STATUS=off
   [ "$( detect_virtualenv --status )" = "off" ]

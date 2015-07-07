@@ -39,6 +39,8 @@ Command-line Options
 `detect_virtualenv` accepts some command-line options:
  * `--off`
     disables detection of virtualenvs when calling `detect_virtualenv`
+ * `--deactivate`
+    same as `off` and also deactivates the current virtualenv
  * `--on`
     enables detection of virtualenvs when calling `detect_virtualenv` (on by default)
  * `--status`
