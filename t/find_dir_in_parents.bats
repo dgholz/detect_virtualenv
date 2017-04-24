@@ -25,8 +25,8 @@ function setup_corpus() {
   # └── quux
   #     └── quuux
   #
-  mkdir --parents "$tempdir"/foo/{bar/baz,bie/bletch}
-  mkdir --parents "$tempdir"/quux/quuux
+  mkdir -p "$tempdir"/foo/{bar/baz,bie/bletch}
+  mkdir -p "$tempdir"/quux/quuux
 }
 
 function teardown_corpus() {

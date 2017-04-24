@@ -4,7 +4,7 @@ function get_tempdir_name() {
 
 function make_tempdir() {
   local tempdir=$( get_tempdir_name $1 )
-  mkdir --parents "$tempdir"
+  mkdir -p "$tempdir"
   echo "$tempdir"
 }
 
