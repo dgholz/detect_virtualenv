@@ -1,15 +1,34 @@
 MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
 DETECT_VIRTUALENV_STATUS=on
 
+function abs_path_readlink() {
+    readlink --canonicalize "$1"
+}
+
+function abs_path_perl() {
+    perl -MCwd=abs_path -e'print abs_path(shift)' "$1"
+}
+
+if abs_path_readlink >/dev/null 2>&1
+then
+    function abs_path() {
+        abs_path_readlink $@
+    }
+else
+    function abs_path() {
+        abs_path_perl $@
+    }
+fi
+
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
-    local look=$( readlink --canonicalize ${2:-.} )
+    local look=$( abs_path ${2:-.} )
     test -d "$look" || return
     local needle_dir=$( dirname "$needle" )
     while [ "$( dirname "$look" )" != "$look" ]
     do
-        if [ "$( builtin cd "$look"; readlink --canonicalize $needle_dir )" = "$look" ]
+        if [ "$( builtin cd "$look"; abs_path $needle_dir )" = "$look" ]
         then
             local candidate=$look/${needle#$look/}
             test -d "$candidate" && echo $candidate && break
