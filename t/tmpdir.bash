@@ -7,8 +7,10 @@ do
   fi
 done
 
+ABS_BATS_TMPDIR=$( cd "$BATS_TMPDIR"; /bin/pwd -P )
+
 function get_tempdir_name() {
-  echo "$BATS_TMPDIR/$( echo ${1:-$BATS_TEST_FILENAME} $PPID | $CHECKSUM | awk '{ print $1 }' )"
+  echo "$ABS_BATS_TMPDIR/$( echo ${1:-$BATS_TEST_FILENAME} $PPID | $CHECKSUM | awk '{ print $1 }' )"
 }
 
 function make_tempdir() {
