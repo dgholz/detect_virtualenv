@@ -1,6 +1,6 @@
 for sum in md5sum md5
 do
-  if which -s $sum
+  if which $sum >/dev/null
   then
     CHECKSUM=$(which $sum)
     break
