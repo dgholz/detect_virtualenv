@@ -21,5 +21,5 @@ function make_tempdir() {
 
 function rm_tempdir() {
   local tempdir=$( get_tempdir_name $1 )
-  rm --recursive --force -- "$tempdir"
+  rm -rf -- "$tempdir"
 }
