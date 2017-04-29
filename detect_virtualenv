@@ -34,9 +34,12 @@ function ancestors_of() {
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
+    # might be the current virtualenv, which is an absolute path
+    local needle_dir=$( dirname "$needle" )
+
     local look=$( abs_path ${2:-.} )
     test -d "$look" || return
-    local needle_dir=$( dirname "$needle" )
+
     while [ "$( dirname "$look" )" != "$look" ]
     do
         if [ "$( builtin cd "$look"; abs_path $needle_dir )" = "$look" ]
