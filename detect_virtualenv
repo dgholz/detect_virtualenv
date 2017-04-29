@@ -20,6 +20,17 @@ else
     }
 fi
 
+function ancestors_of() {
+    local dir=$( abs_path "${1:-.}" )
+    local last
+    while [ "$dir" != "$last" ]
+    do
+        echo "${dir%/}/"
+        last="$dir"
+        dir=$( dirname "$dir" )
+    done
+}
+
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
