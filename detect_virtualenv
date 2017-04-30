@@ -31,6 +31,21 @@ function ancestors_of() {
     done
 }
 
+function match_parent() {
+    # ancestors_of /foo/bar/baz | match_parent /foo/bie
+    #   /foo/bie
+    [ -z "$1" ] && return
+    ancestor_parent="$( dirname "$1" )"
+    while read -r -d '' parent
+    do
+        if [ "$parent" = "${ancestor_parent%/}/" ]
+        then
+            printf "%s\0" "$1"
+            break
+        fi
+    done
+}
+
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
