@@ -25,7 +25,7 @@ function ancestors_of() {
     local last
     while [ "$dir" != "$last" ]
     do
-        echo "${dir%/}/"
+        printf "%s\0" "${dir%/}/"
         last="$dir"
         dir=$( dirname "$dir" )
     done
