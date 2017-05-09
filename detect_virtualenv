@@ -40,9 +40,19 @@ function match_parent() {
     do
         if [ "$parent" = "${ancestor_parent%/}/" ]
         then
-            printf "%s\0" "$1"
+            printf "%s/\0" "${1%/}"
             break
         fi
+    done
+}
+
+function append_relpath() {
+    while read -r -d '' parent
+    do
+        for child in "$@"
+        do
+            printf "%s%s/\0" "$parent" "$child"
+        done
     done
 }
 
