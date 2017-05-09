@@ -56,6 +56,13 @@ function append_relpath() {
     done
 }
 
+function has_activate_script() {
+    while read -r -d '' candidate
+    do
+        [ -e "${candidate}bin/activate" ] && printf "%s\0" "$candidate"
+    done
+}
+
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
