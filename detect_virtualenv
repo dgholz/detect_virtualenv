@@ -63,6 +63,10 @@ function has_activate_script() {
     done
 }
 
+function find_virtualenvs() {
+    ancestors_of | tee  >( append_relpath "$@" ) | match_parent "$VIRTUAL_ENV" | has_activate_script
+}
+
 function find_dir_in_parents() {
     local needle=$1
     test -n "$needle" || return
@@ -128,14 +132,13 @@ function detect_virtualenv() {
     fi
 
     local names=${args[0]:-$MY_VIRTUALENV_NAMES}
-    IFS=':' read -ra dirs <<< "${VIRTUAL_ENV:+$VIRTUAL_ENV:}$names"
-    local found
-    for dir in "${dirs[@]}"
-    do
-        local found=$( find_dir_in_parents "$dir" )
-        [ -n "$found" ] && break
-    done
-    switch_virtualenvs "$found"
+    IFS=':' read -ra virtualenv_names <<< "$names"
+
+    exec 31< <( find_virtualenvs "${virtualenv_names[@]}"; printf '\0' )
+    read -r -d '' -u 31 first
+    echo $first >> /tmp/hi
+    exec 31<&-
+    switch_virtualenvs "$first"
 }
 
 function detect_virtualenv_on_prompt() {

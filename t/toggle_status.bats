@@ -2,8 +2,8 @@ function setup() {
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
 
-  function find_dir_in_parents() {
-      echo "$@"
+  function find_virtualenvs() {
+      printf "%s\0" "$@"
   }
   function switch_virtualenvs() {
       _SWITCH_TO=$@
