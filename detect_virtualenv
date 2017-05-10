@@ -25,7 +25,7 @@ function ancestors_of() {
     local last
     while [ "$dir" != "$last" ]
     do
-        printf "%s\0" "${dir%/}/"
+        printf "%s\0" "${dir%/}"
         last="$dir"
         dir=$( dirname "$dir" )
     done
@@ -38,9 +38,9 @@ function match_parent() {
     local ancestor_parent="$( dirname "$1" )"
     while read -r -d '' parent
     do
-        if [ "$parent" = "${ancestor_parent%/}/" ]
+        if [ "$parent" = "$ancestor_parent" ]
         then
-            printf "%s/\0" "${1%/}"
+            printf "%s\0" "${1%/}"
             break
         fi
     done
@@ -51,7 +51,7 @@ function append_relpath() {
     do
         for child in "$@"
         do
-            printf "%s%s/\0" "$parent" "$child"
+            printf "%s/%s\0" "$parent" "$child"
         done
     done
 }
@@ -59,7 +59,7 @@ function append_relpath() {
 function has_activate_script() {
     while read -r -d '' candidate
     do
-        [ -e "${candidate}bin/activate" ] && printf "%s\0" "$candidate"
+        [ -e "${candidate}/bin/activate" ] && printf "%s\0" "$candidate"
     done
 }
 

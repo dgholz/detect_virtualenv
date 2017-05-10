@@ -44,11 +44,11 @@ function teardown_corpus() {
   done <&99
   exec 99<&-
 
-  [ "${parents[0]}" = "$tempdir/foo/bar/" ]
-  [ "${parents[1]}" = "$tempdir/foo/" ]
-  [ "${parents[2]}" = "$tempdir/" ]
-  [ "${parents[${#parents[@]} - 2]}" != "/" ]
-  [ "${parents[${#parents[@]} - 1]}" = "/" ]
+  [ "${parents[0]}" = "$tempdir/foo/bar" ]
+  [ "${parents[1]}" = "$tempdir/foo" ]
+  [ "${parents[2]}" = "$tempdir" ]
+  [ "${parents[${#parents[@]} - 2]}" != "" ]
+  [ "${parents[${#parents[@]} - 1]}" = "" ]
 }
 
 @test "lists parents resolves symlinks" {
@@ -62,11 +62,11 @@ function teardown_corpus() {
   done <&99
   exec 99<&-
 
-  [ "${parents[0]}" = "$tempdir/foo/bie/" ]
-  [ "${parents[1]}" = "$tempdir/foo/" ]
-  [ "${parents[2]}" = "$tempdir/" ]
-  [ "${parents[${#parents[@]} - 2]}" != "/" ]
-  [ "${parents[${#parents[@]} - 1]}" = "/" ]
+  [ "${parents[0]}" = "$tempdir/foo/bie" ]
+  [ "${parents[1]}" = "$tempdir/foo" ]
+  [ "${parents[2]}" = "$tempdir" ]
+  [ "${parents[${#parents[@]} - 2]}" != "" ]
+  [ "${parents[${#parents[@]} - 1]}" = "" ]
 }
 
 # vim: ft=sh
