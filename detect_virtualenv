@@ -59,7 +59,7 @@ function append_relpath() {
 function has_activate_script() {
     while IFS= read -r -d '' candidate
     do
-        [ -e "${candidate}/bin/activate" ] && printf "%s\0" "$candidate"
+        [ -r "${candidate}/bin/activate" ] && printf "%s\0" "$candidate"
     done
 }
 
