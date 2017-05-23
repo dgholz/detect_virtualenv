@@ -113,6 +113,11 @@ function status_should_be() {
     esac
 }
 
+function first0() {
+    IFS= read -r -d '' first
+    printf "%s" "$first"
+}
+
 function detect_virtualenv() {
     local -a args=()
     while [ "$#" -gt 0 ]
@@ -134,10 +139,7 @@ function detect_virtualenv() {
     local names=${args[0]:-$MY_VIRTUALENV_NAMES}
     IFS=':' read -ra virtualenv_names <<< "$names"
 
-    exec 31< <( find_virtualenvs "${virtualenv_names[@]}"; printf '\0' )
-    read -r -d '' -u 31 first
-    echo $first >> /tmp/hi
-    exec 31<&-
+    first=$( find_virtualenvs "${virtualenv_names[@]}" | first0 )
     switch_virtualenvs "$first"
 }
 
