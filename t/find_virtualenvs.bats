@@ -5,6 +5,12 @@ function setup() {
   begin && run setup_corpus
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
+  function has_activate_script() {
+    while read -r -d '' candidate
+    do
+      [ -d "${candidate}" ] && printf "%s\0" "$candidate"
+    done
+  }
 }
 
 function teardown() {
@@ -14,7 +20,6 @@ function teardown() {
 
 function setup_corpus() {
   local tempdir=$( make_tempdir )
-  local found=$( find_dir_in_parents "quux" "$tempdir/foo/bar" )
   #
   # $tempdir
   # ├── foo
@@ -35,7 +40,7 @@ function teardown_corpus() {
 
 @test "dir to find is starting dir" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar/baz" )
+  local found=$( cd "$tempdir/foo/bar/baz"; ancestors_of | append_relpath baz | has_activate_script | xargs -n1 -0 | head -1 )
   #
   # $tempdir
   # ├── foo

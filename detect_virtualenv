@@ -64,27 +64,7 @@ function has_activate_script() {
 }
 
 function find_virtualenvs() {
-    ancestors_of | tee  >( append_relpath "$@" ) | match_parent "$VIRTUAL_ENV" | has_activate_script
-}
-
-function find_dir_in_parents() {
-    local needle=$1
-    test -n "$needle" || return
-    # might be the current virtualenv, which is an absolute path
-    local needle_dir=$( dirname "$needle" )
-
-    local look=$( abs_path ${2:-.} )
-    test -d "$look" || return
-
-    while [ "$( dirname "$look" )" != "$look" ]
-    do
-        if [ "$( builtin cd "$look"; abs_path $needle_dir )" = "$look" ]
-        then
-            local candidate=$look/${needle#$look/}
-            test -d "$candidate" && echo $candidate && break
-        fi
-        look=$( dirname "$look" )
-    done
+    ancestors_of | tee >( append_relpath "$@" ) | match_parent "$VIRTUAL_ENV" | has_activate_script
 }
 
 function switch_virtualenvs() {
