@@ -36,7 +36,7 @@ function match_parent() {
     #   /foo/bie
     [ -z "$1" ] && return
     local ancestor_parent="$( dirname "$1" )"
-    while read -r -d '' parent
+    while IFS= read -r -d '' parent
     do
         if [ "$parent" = "$ancestor_parent" ]
         then
@@ -47,7 +47,7 @@ function match_parent() {
 }
 
 function append_relpath() {
-    while read -r -d '' parent
+    while IFS= read -r -d '' parent
     do
         for child in "$@"
         do
@@ -57,7 +57,7 @@ function append_relpath() {
 }
 
 function has_activate_script() {
-    while read -r -d '' candidate
+    while IFS= read -r -d '' candidate
     do
         [ -e "${candidate}/bin/activate" ] && printf "%s\0" "$candidate"
     done

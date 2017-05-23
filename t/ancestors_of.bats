@@ -38,7 +38,7 @@ function teardown_corpus() {
   local -a parents
   # pipelines create subshells, which don;t update variables in the parent
   exec 99< <( ancestors_of "$tempdir/foo/bar" )
-  while read -r -d '' parent
+  while IFS= read -r -d '' parent
   do
       parents+=("$parent")
   done <&99
@@ -56,7 +56,7 @@ function teardown_corpus() {
   local -a parents
   # pipelines create subshells, which don;t update variables in the parent
   exec 99< <( ancestors_of "$tempdir/foobie" )
-  while read -r -d '' parent
+  while IFS= read -r -d '' parent
   do
       parents+=("$parent")
   done <&99
