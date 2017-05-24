@@ -64,7 +64,7 @@ function has_activate_script() {
 }
 
 function find_virtualenvs() {
-    ancestors_of | tee >( append_relpath "$@" ) | match_parent "$VIRTUAL_ENV" | has_activate_script
+    ancestors_of | tee >( append_relpath "$@" ) >( match_parent "$VIRTUAL_ENV" ) >/dev/null | has_activate_script
 }
 
 function switch_virtualenvs() {
