@@ -34,16 +34,18 @@ function ancestors_of() {
 function match_parent() {
     # ancestors_of /foo/bar/baz | match_parent /foo/bie
     #   /foo/bie
-    [ -z "$1" ] && return
-    local ancestor_parent="$( dirname "$1" )"
-    while IFS= read -r -d '' parent
-    do
-        if [ "$parent" = "$ancestor_parent" ]
-        then
-            printf "%s\0" "${1%/}"
-            break
-        fi
-    done
+    if [ -n "$1" ]
+    then
+        local ancestor_parent="$( dirname "$1" )"
+        while IFS= read -r -d '' parent
+        do
+            if [ "$parent" = "$ancestor_parent" ]
+            then
+                printf "%s\0" "${1%/}"
+                break
+            fi
+        done
+    fi
 }
 
 function append_relpath() {
