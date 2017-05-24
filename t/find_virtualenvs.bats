@@ -70,23 +70,6 @@ function teardown_corpus() {
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
-@test "starting dir defaults to cwd" {
-  local tempdir=$( get_tempdir_name )
-  builtin cd "$tempdir/foo/bar"
-  local found=$( find_dir_in_parents 'baz' )
-  #
-  # $tempdir
-  # ├── foo
-  # │   ├── bar        # start
-  # │   │   └── baz    # found
-  # │   └── bie
-  # │       └── bletch
-  # └── quux
-  #     └── quuux
-  #
-  [ "$found" = "$tempdir/foo/bar/baz" ]
-}
-
 @test "ignores non-builtin cd" {
   function cd() {
       echo hi
