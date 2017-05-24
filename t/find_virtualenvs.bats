@@ -70,10 +70,9 @@ function teardown_corpus() {
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
-@test "ignores non-builtin cd" {
+@test "doesn't mind if cd is not the same as builtin cd" {
   function cd() {
-      echo hi
-      builtin cd $@
+      builtin cd "$tempdir/bie/bletch"
   }
   local tempdir=$( get_tempdir_name )
   local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
