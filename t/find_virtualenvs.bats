@@ -40,7 +40,7 @@ function teardown_corpus() {
 
 @test "dir to find is starting dir" {
   local tempdir=$( get_tempdir_name )
-  local found=$( cd "$tempdir/foo/bar/baz"; ancestors_of | append_relpath baz | has_activate_script | xargs -n1 -0 | head -1 )
+  local found=$( cd "$tempdir/foo/bar/baz"; find_virtualenvs 'baz' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -56,7 +56,7 @@ function teardown_corpus() {
 
 @test "dir to find is in starting dir" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'baz' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -75,13 +75,13 @@ function teardown_corpus() {
       builtin cd "$tempdir/bie/bletch"
   }
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
+  local found=$( builtin cd "$tempdir/foo/bar"; find_virtualenvs 'baz' | first0 )
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
 @test "dir to find is sibling of starting dir" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bie' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -97,7 +97,7 @@ function teardown_corpus() {
 
 @test "dir to find is parent's sibling" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'quux' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'quux' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -113,7 +113,7 @@ function teardown_corpus() {
 
 @test "dir to find is in sibling (not found)" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bletch' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bletch' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -130,7 +130,7 @@ function teardown_corpus() {
 @test "dir to find is sibling/child" {
   skip "can only find dirs whose dirname is . OR are abs paths"
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bie/bletch' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie/bletch' | first0 )
   #
   # $tempdir
   # ├── foo
@@ -146,13 +146,13 @@ function teardown_corpus() {
 
 @test "dir to find doesn't exist (not found)" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'xyzzy' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'xyzzy' | first0 )
   [ -z "$found" ]
 }
 
 @test "start dir doesn't exist (nothing found)" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'foo' "$tempdir/foobar" )
+  local found=$( cd "$tempdir/foobar"; find_virtualenvs 'foo' | first0 )
   [ -z "$found" ]
 }
 
@@ -165,13 +165,13 @@ function teardown_corpus() {
 
 @test "abs path to find and it's a sibling of an ancestor" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents "$tempdir/quux" "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; VIRTUAL_ENV="$tempdir/quux" find_virtualenvs | first0 )
   [ "$found" = "$tempdir/quux" ]
 }
 
 @test "abs path to find but it's not a sibling of an ancestor (not found)" {
   local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents "$tempdir/quux/quuux" "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; VIRTUAL_ENV="$tmpdir/quux/quuux" find_virtualenvs | first0 )
   [ -z "$found" ]
 }
 
