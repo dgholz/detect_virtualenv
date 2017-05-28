@@ -5,6 +5,7 @@ function setup() {
   begin && run setup_corpus
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
+  tempdir=$( get_tempdir_name )
 }
 
 function teardown() {
@@ -34,7 +35,6 @@ function teardown_corpus() {
 }
 
 @test "lists parents" {
-  local tempdir=$( get_tempdir_name )
   local -a parents
   # pipelines create subshells, which don;t update variables in the parent
   exec 99< <( ancestors_of "$tempdir/foo/bar" )
@@ -52,7 +52,6 @@ function teardown_corpus() {
 }
 
 @test "lists parents resolves symlinks" {
-  local tempdir=$( get_tempdir_name )
   local -a parents
   # pipelines create subshells, which don;t update variables in the parent
   exec 99< <( ancestors_of "$tempdir/foobie" )
