@@ -7,7 +7,7 @@ function setup() {
     tempdir=$( make_tempdir )
     mkdir -p "$tempdir/venv/bin"
     cat <<-"EOF" >"$tempdir/venv/bin/activate"
-		export _ACTIVATED_FOR=$BATS_TEST_NAME
+		export _ACTIVATED_FOR="$BATS_TEST_NAME"
 	EOF
   fi
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
