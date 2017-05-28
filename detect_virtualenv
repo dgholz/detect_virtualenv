@@ -46,6 +46,7 @@ function match_parent() {
             fi
         done
     fi
+    cat > /dev/null
 }
 
 function append_relpath() {
@@ -98,6 +99,7 @@ function status_should_be() {
 function first0() {
     IFS= read -r -d '' first
     printf "%s" "$first"
+    cat > /dev/null
 }
 
 function detect_virtualenv() {
