@@ -139,12 +139,7 @@ function teardown_corpus() {
 }
 
 @test "dir to find doesn't exist (not found)" {
-  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'xyzzy' | first0 )
-  [ -z "$found" ]
-}
-
-@test "start dir doesn't exist (nothing found)" {
-  local found=$( cd "$tempdir/foobar"; find_virtualenvs 'foo' | first0 )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'xyzzy' | head -1 )
   [ -z "$found" ]
 }
 
