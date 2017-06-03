@@ -123,19 +123,18 @@ function teardown_corpus() {
 }
 
 @test "dir to find is sibling/child" {
-  skip "can only find dirs whose dirname is . OR are abs paths"
-  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie/bletch' | first0 )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie/bletch' | head -1 )
   #
   # $tempdir
   # ├── foo
   # │   ├── bar        # start
   # │   │   └── baz
   # │   └── bie
-  # │       └── bletch # not found
+  # │       └── bletch # found
   # └── quux
   #     └── quuux
   #
-  [ -z "$found" ]
+  [ "$found" = "$tempdir/foo/bie/bletch" ]
 }
 
 @test "dir to find doesn't exist (not found)" {
