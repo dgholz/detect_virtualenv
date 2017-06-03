@@ -32,15 +32,6 @@ function setup() {
   [ "$_SWITCH_TO" = "first" ]
 }
 
-@test "prefer \$VIRTUAL_ENV if found" {
-  function find_virtualenvs() {
-    fake_find_virtualenv "." "$@"
-  }
-  VIRTUAL_ENV=this_virtualenv
-  detect_virtualenv foo:bar:this_virtualenv:baz
-  [ "$_SWITCH_TO" = "this_virtualenv" ]
-}
-
 @test "switch to \"\" if no dirs found" {
   function find_virtualenvs() {
     fake_find_virtualenv '^$' "$@"

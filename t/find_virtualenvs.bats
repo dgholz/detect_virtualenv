@@ -164,4 +164,9 @@ function teardown_corpus() {
   [ -z "$found" ]
 }
 
+@test "prefer \$VIRTUAL_ENV if found" {
+  local found=$( cd "$tempdir/foo/bar/baz"; VIRTUAL_ENV="$tempdir/quux" find_virtualenvs bar | head -1 )
+  [ "$found" = "$tempdir/quux" ]
+}
+
 # vim: ft=sh
