@@ -1,24 +1,10 @@
 MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
 DETECT_VIRTUALENV_STATUS=on
 
-function abs_path_readlink() {
-    readlink --canonicalize "$1"
+function abs_path() {
+    builtin cd "$1"
+    /bin/pwd -P
 }
-
-function abs_path_perl() {
-    perl -MCwd=abs_path -e'print abs_path(shift)' "$1"
-}
-
-if abs_path_readlink >/dev/null 2>&1
-then
-    function abs_path() {
-        abs_path_readlink $@
-    }
-else
-    function abs_path() {
-        abs_path_perl $@
-    }
-fi
 
 function ancestors_of() {
     local dir=$( abs_path "${1:-.}" )
