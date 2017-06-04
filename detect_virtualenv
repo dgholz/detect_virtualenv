@@ -11,7 +11,7 @@ function ancestors_of() {
     local last
     while [ "$dir" != "$last" ]
     do
-        printf "%s\0" "${dir%/}"
+        printf "%q\n" "${dir%/}"
         last="$dir"
         dir=$( dirname "$dir" )
     done
@@ -20,35 +20,25 @@ function ancestors_of() {
 function match_parent() {
     # ancestors_of /foo/bar/baz | match_parent /foo/bie
     #   /foo/bie
-    if [ -n "$1" ]
-    then
-        local ancestor_parent="$( dirname "$1" )"
-        while IFS= read -r -d '' parent
-        do
-            if [ "$parent" = "$ancestor_parent" ]
-            then
-                printf "%s\0" "${1%/}"
-                break
-            fi
-        done
-    fi
-    cat > /dev/null
+    printf -v ancestor_parent "%q" "$( dirname "$1" )"
+    grep -F -q "$ancestor_parent" && printf "%q\n" "$1" && cat >/dev/null
 }
 
 function append_relpath() {
-    while IFS= read -r -d '' parent
+    while read -r parent
     do
         for child in "$@"
         do
-            printf "%s/%s\0" "$parent" "$child"
+            printf "%s/%q\n" "$parent" "$child"
         done
     done
 }
 
 function has_activate_script() {
-    while IFS= read -r -d '' candidate
+    while read -r candidate
     do
-        [ -r "${candidate}/bin/activate" ] && printf "%s\0" "$candidate"
+        local unescaped_candidate="$( eval echo "$candidate" )"
+        [ -r "${unescaped_candidate}/bin/activate" ] && echo "$candidate"
     done
 }
 
@@ -82,12 +72,6 @@ function status_should_be() {
     esac
 }
 
-function first0() {
-    IFS= read -r -d '' first
-    printf "%s" "$first"
-    cat > /dev/null
-}
-
 function detect_virtualenv() {
     local -a args
     while [ "$#" -gt 0 ]
@@ -109,7 +93,7 @@ function detect_virtualenv() {
     local names=${args[0]:-$MY_VIRTUALENV_NAMES}
     IFS=':' read -ra virtualenv_names <<< "$names"
 
-    first=$( find_virtualenvs "${virtualenv_names[@]}" | first0 )
+    first="$( eval echo "$( find_virtualenvs "${virtualenv_names[@]}" | head -1 )" )"
     switch_virtualenvs "$first"
 }
 

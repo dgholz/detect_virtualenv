@@ -35,37 +35,23 @@ function teardown_corpus() {
 }
 
 @test "lists parents" {
-  local -a parents
-  # pipelines create subshells, which don;t update variables in the parent
-  exec 4< <( ancestors_of "$tempdir/foo/bar" )
-  while IFS= read -r -d '' parent
-  do
-      parents+=("$parent")
-  done <&4
-  exec 4<&-
+  IFS=$'\n' read -d'' -r -a parents < <( ancestors_of "$tempdir/foo/bar" ) || true
 
   [ "${parents[0]}" = "$tempdir/foo/bar" ]
   [ "${parents[1]}" = "$tempdir/foo" ]
   [ "${parents[2]}" = "$tempdir" ]
-  [ "${parents[${#parents[@]} - 2]}" != "" ]
-  [ "${parents[${#parents[@]} - 1]}" = "" ]
+  [ "${parents[${#parents[@]} - 2]}" != "''" ]
+  [ "${parents[${#parents[@]} - 1]}" = "''" ]
 }
 
 @test "lists parents resolves symlinks" {
-  local -a parents
-  # pipelines create subshells, which don;t update variables in the parent
-  exec 4< <( ancestors_of "$tempdir/foobie" )
-  while IFS= read -r -d '' parent
-  do
-      parents+=("$parent")
-  done <&4
-  exec 4<&-
+  IFS=$'\n' read -d'' -r -a parents < <( ancestors_of "$tempdir/foobie" ) || true
 
   [ "${parents[0]}" = "$tempdir/foo/bie" ]
   [ "${parents[1]}" = "$tempdir/foo" ]
   [ "${parents[2]}" = "$tempdir" ]
-  [ "${parents[${#parents[@]} - 2]}" != "" ]
-  [ "${parents[${#parents[@]} - 1]}" = "" ]
+  [ "${parents[${#parents[@]} - 2]}" != "''" ]
+  [ "${parents[${#parents[@]} - 1]}" = "''" ]
 }
 
 # vim: ft=sh

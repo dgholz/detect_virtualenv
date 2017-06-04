@@ -11,7 +11,7 @@ function setup() {
   function fake_find_virtualenv() {
     local pattern
     pattern=$1; shift
-    echo "$@" | xargs -n1 | grep "$pattern" | while read l; do printf "%s\0" "$l"; done
+    echo "$@" | xargs -n1 | grep "$pattern"
   }
 }
 

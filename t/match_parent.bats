@@ -12,12 +12,12 @@ function setup() {
 }
 
 @test "recognise dir as sibling to an ancestor when it has a weird character" {
-  found=$(ancestors_of /foo/bar/baz/ | match_parent $'/foo/bie\nhi')
+  found="$( eval echo "$(ancestors_of /foo/bar/baz/ | match_parent $'/foo/bie\nhi')" )"
   [ "$found" = $'/foo/bie\nhi' ]
 }
 
 @test "recognise dir as sibling to an ancestor when ancestors have weird characters" {
-  found=$(ancestors_of $'/fo\no/bar/baz/' | match_parent $'/fo\no/bie')
+  found="$( eval echo "$(ancestors_of $'/fo\no/bar/baz/' | match_parent $'/fo\no/bie')" )"
   [ "$found" = $'/fo\no/bie' ]
 }
 
