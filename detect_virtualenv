@@ -89,7 +89,7 @@ function first0() {
 }
 
 function detect_virtualenv() {
-    local -a args=()
+    local -a args
     while [ "$#" -gt 0 ]
     do
         local arg="$1"; shift
