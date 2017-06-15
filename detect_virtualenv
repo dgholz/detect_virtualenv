@@ -27,10 +27,7 @@ function match_parent() {
 function append_relpath() {
     while read -r parent
     do
-        for child in "$@"
-        do
-            printf "%s/%q\n" "$parent" "$child" 2>/dev/null
-        done
+        printf "$parent/%q\n" "$@" 2>/dev/null
     done
 }
 
