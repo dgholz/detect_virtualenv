@@ -4,14 +4,15 @@ load tmpdir
 function setup() {
   if begin
   then
-    local tempdir=$( make_tempdir )
+    tempdir=$( make_tempdir )
     mkdir -p "$tempdir/venv/bin"
     cat <<-"EOF" >"$tempdir/venv/bin/activate"
-		export _ACTIVATED_FOR=$BATS_TEST_NAME
+		export _ACTIVATED_FOR="$BATS_TEST_NAME"
 	EOF
   fi
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
+  tempdir=$( get_tempdir_name )
 }
 
 function teardown() {
@@ -27,14 +28,12 @@ function deactivate() {
 }
 
 @test "no current virtualenv and new one given" {
-  local tempdir=$( get_tempdir_name )
   switch_virtualenvs "$tempdir/venv"
   [ "$_ACTIVATED_FOR" = "$BATS_TEST_NAME" ]
   [ -z "$_DEACTIVATED_FOR" ]
 }
 
 @test "current virtualenv and no new one given" {
-  local tempdir=$( get_tempdir_name )
   VIRTUAL_ENV="currently a virtualenv is active"
   switch_virtualenvs
   [ -z "$_ACTIVATED_FOR" ]
@@ -42,14 +41,12 @@ function deactivate() {
 }
 
 @test "no current virtualenv and no new one given" {
-  local tempdir=$( get_tempdir_name )
   switch_virtualenvs
   [ -z "$_ACTIVATED_FOR" ]
   [ -z "$_DEACTIVATED_FOR" ]
 }
 
 @test "current virtualenv and new one given" {
-  local tempdir=$( get_tempdir_name )
   VIRTUAL_ENV="currently a virtualenv is active"
   switch_virtualenvs "$tempdir/venv"
   [ "$_ACTIVATED_FOR" = "$BATS_TEST_NAME" ]
@@ -57,7 +54,6 @@ function deactivate() {
 }
 
 @test "new virtualenv matches current is a no-op" {
-  local tempdir=$( get_tempdir_name )
   VIRTUAL_ENV="$tempdir/venv"
   switch_virtualenvs "$tempdir/venv"
   [ -z "$_ACTIVATED_FOR" ]

@@ -7,37 +7,34 @@ function setup() {
   function switch_virtualenvs() {
     _SWITCH_TO=$@
   }
+
+  function fake_find_virtualenv() {
+    local pattern
+    pattern=$1; shift
+    echo "$@" | xargs -n1 | grep "$pattern"
+  }
 }
 
 @test "switch to first virtualenv found" {
-  function find_dir_in_parents() {
-    echo $@ | grep [e]
+  function find_virtualenvs() {
+    fake_find_virtualenv "[d]" "$@"
   }
   detect_virtualenv first:second:third
   [ "$_SWITCH_TO" = "second" ]
 }
 
 @test "take virtualenvs to find from MY_VIRTUALENV_NAMES" {
-  function find_dir_in_parents() {
-    echo $@ | grep [i]
+  function find_virtualenvs() {
+    fake_find_virtualenv "[i]" "$@"
   }
   MY_VIRTUALENV_NAMES=first:second:third
   detect_virtualenv
   [ "$_SWITCH_TO" = "first" ]
 }
 
-@test "prefer \$VIRTUAL_ENV if found" {
-  function find_dir_in_parents() {
-    echo $@
-  }
-  VIRTUAL_ENV=this_virtualenv
-  detect_virtualenv foo:bar:this_virtualenv:baz
-  [ "$_SWITCH_TO" = "this_virtualenv" ]
-}
-
 @test "switch to \"\" if no dirs found" {
-  function find_dir_in_parents() {
-    :
+  function find_virtualenvs() {
+    fake_find_virtualenv '^$' "$@"
   }
   detect_virtualenv quux:quuux:quuuux
   [ "${_SWITCH_TO-not set}" = "" ]

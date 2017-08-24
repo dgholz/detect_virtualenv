@@ -1,40 +1,46 @@
 MY_VIRTUALENV_NAMES=${MY_VIRTUALENV_NAMES:-.venv}
 DETECT_VIRTUALENV_STATUS=on
 
-function abs_path_readlink() {
-    readlink --canonicalize "$1"
+function abs_path() {
+    builtin cd "$1"
+    /bin/pwd -P
 }
 
-function abs_path_perl() {
-    perl -MCwd=abs_path -e'print abs_path(shift)' "$1"
-}
-
-if abs_path_readlink >/dev/null 2>&1
-then
-    function abs_path() {
-        abs_path_readlink $@
-    }
-else
-    function abs_path() {
-        abs_path_perl $@
-    }
-fi
-
-function find_dir_in_parents() {
-    local needle=$1
-    test -n "$needle" || return
-    local look=$( abs_path ${2:-.} )
-    test -d "$look" || return
-    local needle_dir=$( dirname "$needle" )
-    while [ "$( dirname "$look" )" != "$look" ]
+function ancestors_of() {
+    local dir=$( abs_path "${1:-.}" )
+    local last
+    while [ "$dir" != "$last" ]
     do
-        if [ "$( builtin cd "$look"; abs_path $needle_dir )" = "$look" ]
-        then
-            local candidate=$look/${needle#$look/}
-            test -d "$candidate" && echo $candidate && break
-        fi
-        look=$( dirname "$look" )
+        printf "%q\n" "${dir%/}" 2>/dev/null
+        last="$dir"
+        dir=$( dirname "$dir" )
     done
+}
+
+function match_parent() {
+    # ancestors_of /foo/bar/baz | match_parent /foo/bie
+    #   /foo/bie
+    printf -v ancestor_parent "%q" "$( dirname "$1" )"
+    grep -F -q "$ancestor_parent" && printf "%q\n" "$1" 2>/dev/null
+}
+
+function append_relpath() {
+    while read -r parent
+    do
+        printf "$parent/%q\n" "$@" 2>/dev/null
+    done
+}
+
+function has_activate_script() {
+    while read -r candidate
+    do
+        local unescaped_candidate="$( eval echo "$candidate" )"
+        [ -r "${unescaped_candidate}/bin/activate" ] && echo "$candidate" 2>/dev/null
+    done
+}
+
+function find_virtualenvs() {
+    ancestors_of | tee >( append_relpath "$@" ) >( match_parent "$VIRTUAL_ENV" ) >/dev/null | has_activate_script
 }
 
 function switch_virtualenvs() {
@@ -64,7 +70,7 @@ function status_should_be() {
 }
 
 function detect_virtualenv() {
-    local -a args=()
+    local -a args
     while [ "$#" -gt 0 ]
     do
         local arg="$1"; shift
@@ -82,14 +88,10 @@ function detect_virtualenv() {
     fi
 
     local names=${args[0]:-$MY_VIRTUALENV_NAMES}
-    IFS=':' read -ra dirs <<< "${VIRTUAL_ENV:+$VIRTUAL_ENV:}$names"
-    local found
-    for dir in "${dirs[@]}"
-    do
-        local found=$( find_dir_in_parents "$dir" )
-        [ -n "$found" ] && break
-    done
-    switch_virtualenvs "$found"
+    IFS=':' read -ra virtualenv_names <<< "$names"
+
+    first="$( eval echo "$( find_virtualenvs "${virtualenv_names[@]}" | head -1 )" )"
+    switch_virtualenvs "$first"
 }
 
 function detect_virtualenv_on_prompt() {

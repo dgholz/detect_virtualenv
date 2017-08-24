@@ -5,6 +5,14 @@ function setup() {
   begin && run setup_corpus
   PATH="$BATS_TEST_DIRNAME/..:$PATH"
   source detect_virtualenv
+  function has_activate_script() {
+    while read -r candidate
+    do
+      local unescaped_candidate=$(printf "%b" "$candidate")
+      [ -d "${unescaped_candidate}" ] && echo "$candidate"
+    done
+  }
+  tempdir=$( get_tempdir_name )
 }
 
 function teardown() {
@@ -14,7 +22,6 @@ function teardown() {
 
 function setup_corpus() {
   local tempdir=$( make_tempdir )
-  local found=$( find_dir_in_parents "quux" "$tempdir/foo/bar" )
   #
   # $tempdir
   # ├── foo
@@ -34,8 +41,7 @@ function teardown_corpus() {
 }
 
 @test "dir to find is starting dir" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar/baz" )
+  local found=$( cd "$tempdir/foo/bar/baz"; find_virtualenvs 'baz' | head -1 )
   #
   # $tempdir
   # ├── foo
@@ -50,8 +56,7 @@ function teardown_corpus() {
 }
 
 @test "dir to find is in starting dir" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'baz' | head -1 )
   #
   # $tempdir
   # ├── foo
@@ -65,36 +70,16 @@ function teardown_corpus() {
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
-@test "starting dir defaults to cwd" {
-  local tempdir=$( get_tempdir_name )
-  builtin cd "$tempdir/foo/bar"
-  local found=$( find_dir_in_parents 'baz' )
-  #
-  # $tempdir
-  # ├── foo
-  # │   ├── bar        # start
-  # │   │   └── baz    # found
-  # │   └── bie
-  # │       └── bletch
-  # └── quux
-  #     └── quuux
-  #
-  [ "$found" = "$tempdir/foo/bar/baz" ]
-}
-
-@test "ignores non-builtin cd" {
+@test "doesn't mind if cd is not the same as builtin cd" {
   function cd() {
-      echo hi
-      builtin cd $@
+      builtin cd "$tempdir/bie/bletch"
   }
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'baz' "$tempdir/foo/bar" )
+  local found=$( builtin cd "$tempdir/foo/bar"; find_virtualenvs 'baz' | head -1 )
   [ "$found" = "$tempdir/foo/bar/baz" ]
 }
 
 @test "dir to find is sibling of starting dir" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bie' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie' | head -1 )
   #
   # $tempdir
   # ├── foo
@@ -109,8 +94,7 @@ function teardown_corpus() {
 }
 
 @test "dir to find is parent's sibling" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'quux' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'quux' | head -1 )
   #
   # $tempdir
   # ├── foo
@@ -125,8 +109,7 @@ function teardown_corpus() {
 }
 
 @test "dir to find is in sibling (not found)" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bletch' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bletch' | head -1 )
   #
   # $tempdir
   # ├── foo
@@ -141,51 +124,44 @@ function teardown_corpus() {
 }
 
 @test "dir to find is sibling/child" {
-  skip "can only find dirs whose dirname is . OR are abs paths"
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'bie/bletch' "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'bie/bletch' | head -1 )
   #
   # $tempdir
   # ├── foo
   # │   ├── bar        # start
   # │   │   └── baz
   # │   └── bie
-  # │       └── bletch # not found
+  # │       └── bletch # found
   # └── quux
   #     └── quuux
   #
-  [ -z "$found" ]
+  [ "$found" = "$tempdir/foo/bie/bletch" ]
 }
 
 @test "dir to find doesn't exist (not found)" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'xyzzy' "$tempdir/foo/bar" )
-  [ -z "$found" ]
-}
-
-@test "start dir doesn't exist (nothing found)" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents 'foo' "$tempdir/foobar" )
+  local found=$( cd "$tempdir/foo/bar"; find_virtualenvs 'xyzzy' | head -1 )
   [ -z "$found" ]
 }
 
 @test "no dir to find given (nothing found)" {
-  local tempdir=$( get_tempdir_name )
   builtin cd "$tempdir/foo/bar"
-  local found=$( find_dir_in_parents )
+  local found=$( find_virtualenvs )
   [ -z "$found" ]
 }
 
 @test "abs path to find and it's a sibling of an ancestor" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents "$tempdir/quux" "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; VIRTUAL_ENV="$tempdir/quux" find_virtualenvs | head -1 )
   [ "$found" = "$tempdir/quux" ]
 }
 
 @test "abs path to find but it's not a sibling of an ancestor (not found)" {
-  local tempdir=$( get_tempdir_name )
-  local found=$( find_dir_in_parents "$tempdir/quux/quuux" "$tempdir/foo/bar" )
+  local found=$( cd "$tempdir/foo/bar"; VIRTUAL_ENV="$tmpdir/quux/quuux" find_virtualenvs | head -1 )
   [ -z "$found" ]
+}
+
+@test "prefer \$VIRTUAL_ENV if found" {
+  local found=$( cd "$tempdir/foo/bar/baz"; VIRTUAL_ENV="$tempdir/quux" find_virtualenvs bar | head -1 )
+  [ "$found" = "$tempdir/quux" ]
 }
 
 # vim: ft=sh
