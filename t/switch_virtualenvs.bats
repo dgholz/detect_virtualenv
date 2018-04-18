@@ -59,3 +59,11 @@ function deactivate() {
   [ -z "$_ACTIVATED_FOR" ]
   [ -z "$_DEACTIVATED_FOR" ]
 }
+
+@test "no current virtualenv but \$VIRTUAL_ENV set" {
+  unset deactivate
+  VIRTUAL_ENV="not really a virtualenv"
+  switch_virtualenvs
+  [ -z "$_ACTIVATED_FOR" ]
+  [ -z "$VIRTUAL_ENV" ]
+}
