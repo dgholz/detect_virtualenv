@@ -46,7 +46,10 @@ function find_virtualenvs() {
 function switch_virtualenvs() {
     local new="$1"
     [ "$VIRTUAL_ENV" = "$new" ] && return
-    [ -n "${VIRTUAL_ENV+virtualenv active}" ] && deactivate
+    if [ -n "$VIRTUAL_ENV" ]
+    then
+        declare -f deactivate >/dev/null && deactivate || unset VIRTUAL_ENV
+    fi
     local activate="$new/bin/activate"
     test -e "$activate" && source "$activate"
     true
